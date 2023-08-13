@@ -58,3 +58,36 @@ describe("jpg", () => {
     assert.strictEqual(actual, expected);
   });
 });
+
+describe("mixins", () => {
+  const commonPngImagesPath = [...commonImagesPath, "png"];
+  const commonJpgImagesPath = [...commonImagesPath, "jpg"];
+
+  it("should return false for different png and jpg images", async () => {
+    const expected = false;
+    const jpgImage = readFileSync(
+      join(...commonJpgImagesPath, "different", "image1.jpg")
+    );
+    const pngImage = readFileSync(
+      join(...commonPngImagesPath, "different", "image1.png")
+    );
+
+    const actual = await compare(jpgImage, pngImage);
+
+    assert.strictEqual(actual, expected);
+  });
+
+  it("should return true for same png and jpg images", async () => {
+    const expected = true;
+    const jpgImage = readFileSync(
+      join(...commonImagesPath, "mixins", "image.jpg")
+    );
+    const pngImage = readFileSync(
+      join(...commonImagesPath, "mixins", "image.png")
+    );
+
+    const actual = await compare(jpgImage, pngImage);
+
+    assert.strictEqual(actual, expected);
+  });
+});
