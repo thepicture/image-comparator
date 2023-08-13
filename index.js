@@ -1,35 +1,24 @@
 const {
   getDimensions,
+  BYTE_COMPARERS,
   areBuffersEqual,
   getResizedBitmap,
-  extractBitmapChannelsWithData,
+  extractBitmapAndChannelCount,
 } = require("./lib");
 
 module.exports = {
-  compare: async (buffer1, buffer2) => {
-    const { width: width1, height: height1 } =
-      getDimensions[buffer1.at(0)](buffer1);
-    const { width: width2, height: height2 } =
-      getDimensions[buffer2.at(0)](buffer2);
+  compare: async (buffer1, buffer2) =>
+    areBuffersEqual(
+      ...(await Promise.all([compareImpl(buffer1), compareImpl(buffer2)])),
+      BYTE_COMPARERS[buffer1.at(0)],
+      BYTE_COMPARERS[buffer2.at(0)]
+    ),
+};
 
-    const { channels: channels1, data: bitmap1 } =
-      await extractBitmapChannelsWithData(buffer1);
-    const { channels: channels2, data: bitmap2 } =
-      await extractBitmapChannelsWithData(buffer2);
+const compareImpl = async (buffer) => {
+  const { width, height } = getDimensions[buffer.at(0)](buffer);
 
-    const resizedBitmap1 = await getResizedBitmap(
-      width1,
-      height1,
-      channels1,
-      bitmap1
-    );
-    const resizedBitmap2 = await getResizedBitmap(
-      width2,
-      height2,
-      channels2,
-      bitmap2
-    );
+  const { channels, data: bitmap } = await extractBitmapAndChannelCount(buffer);
 
-    return areBuffersEqual(resizedBitmap1, resizedBitmap2);
-  },
+  return await getResizedBitmap(width, height, channels, bitmap);
 };
