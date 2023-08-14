@@ -39,6 +39,7 @@ if (areSame) {
 
 - png
 - jpg
+- webp
 
 ## Detection algorithm
 
@@ -48,4 +49,5 @@ if (areSame) {
 
 ## Notes
 
-May produce false positives for comparison of images of different format origins due to inconsistent resulting bitmap size
+- May produce false positives for comparison of images of different format origins due to inconsistent resulting bitmap size
+- Can work with interformat images, but WEBP is not supported for this at the moment
