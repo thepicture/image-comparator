@@ -8,7 +8,7 @@ const {
 } = require("./lib");
 
 module.exports = {
-  compare: async (buffer1, buffer2) => {
+  compare: async (buffer1, buffer2, comparator) => {
     const isInterformatComparison =
       buffer1[0] === MIMES.WEBP && buffer1[0] !== buffer2[0];
 
@@ -18,8 +18,8 @@ module.exports = {
 
     return areBuffersEqual(
       ...(await Promise.all([compareImpl(buffer1), compareImpl(buffer2)])),
-      BYTE_COMPARERS[buffer1[0]],
-      BYTE_COMPARERS[buffer2[0]],
+      comparator || BYTE_COMPARERS[buffer1[0]],
+      comparator || BYTE_COMPARERS[buffer2[0]],
       buffer1[0]
     );
   },
