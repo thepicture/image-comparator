@@ -55,6 +55,17 @@ describe("png", () => {
 
     assert.strictEqual(actual, expected);
   });
+
+  it("should detect same images with grayscale", async () => {
+    const expected = true;
+    const commonPathSegments = [...commonPngImagesPath, "same-with-grayscale"];
+    const image1 = readFileSync(join(...commonPathSegments, "image1.png"));
+    const image2 = readFileSync(join(...commonPathSegments, "image2.png"));
+
+    const actual = await compare(image1, image2);
+
+    assert.strictEqual(actual, expected);
+  });
 });
 
 describe("jpg", () => {
