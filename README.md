@@ -54,11 +54,9 @@ const imageBuffer2 = fs.readFileSync(imagePath2);
 const compare = async () => {
   const compareFunction = (byte1, byte2) => false; // Images are always different
 
-  const areSame = await comparator.compare(
-    imageBuffer1,
-    imageBuffer2,
-    compareFunction
-  );
+  const areSame = await comparator.compare(imageBuffer1, imageBuffer2, {
+    compareFunction,
+  });
 
   if (areSame) {
     throw new Error("Should not happen");
@@ -83,11 +81,69 @@ const imageBuffer2 = fs.readFileSync(imagePath2);
 const compare = async () => {
   const compareFunction = (byte1, byte2) => Math.abs(byte1 - byte2) < 128; // If color difference is small enough
 
-  const areSame = await comparator.compare(
-    imageBuffer1,
-    imageBuffer2,
-    compareFunction
-  );
+  const areSame = await comparator.compare(imageBuffer1, imageBuffer2, {
+    compareFunction,
+  });
+
+  if (areSame) {
+    console.log("Images are the same");
+  } else {
+    console.log("Images are different");
+  }
+};
+
+compare();
+```
+
+Hue detection:
+
+```js
+const fs = require("node:fs");
+const comparator = require("image-comparator");
+
+const imagePath1 = "path/to/same.png";
+const imagePath2 = "path/to/same.jpg";
+
+const imageBuffer1 = fs.readFileSync(imagePath1);
+const imageBuffer2 = fs.readFileSync(imagePath2);
+
+const compare = async () => {
+  const compareFunction = (byte1, byte2) => Math.abs(byte1 - byte2) < 128; // If color difference is small enough
+
+  const areSame = await comparator.compare(imageBuffer1, imageBuffer2, {
+    compareFunction,
+    modes: comparator.MODES.CHECK_HUE,
+  });
+
+  if (areSame) {
+    console.log("Images are the same");
+  } else {
+    console.log("Images are different");
+  }
+};
+
+compare();
+```
+
+Grayscale detection:
+
+```js
+const fs = require("node:fs");
+const comparator = require("image-comparator");
+
+const imagePath1 = "path/to/same.png";
+const imagePath2 = "path/to/same.jpg";
+
+const imageBuffer1 = fs.readFileSync(imagePath1);
+const imageBuffer2 = fs.readFileSync(imagePath2);
+
+const compare = async () => {
+  const compareFunction = (byte1, byte2) => Math.abs(byte1 - byte2) < 128; // If color difference is small enough
+
+  const areSame = await comparator.compare(imageBuffer1, imageBuffer2, {
+    compareFunction,
+    modes: comparator.MODES.CHECK_GRAYSCALE,
+  });
 
   if (areSame) {
     console.log("Images are the same");
@@ -102,16 +158,19 @@ compare();
 # API
 
 ```js
-compare: (
-  buffer1: Buffer,
-  buffer2: Buffer,
-  compareFunction: (byte1, byte2) => boolean
-) => bool;
+compare: (buffer1: Buffer, buffer2: Buffer, options: Options) => bool;
+
+type Options = {
+  compareFunction: (byte1, byte2) => boolean,
+  modes: MODES.CHECK_HUE | MODES.CHECK_GRAYSCALE,
+};
 ```
 
-Compares two images.
+Compares two images. Can accept modes to detect hue or grayscale changes.
 
-Throws if WEBP image is compared with imag of another extension.
+Throws if WEBP image is compared with image of another extension.
+
+Warns about deprecated third argument if `compareFunction` passed outside the object as `function`.
 
 ## Supported extensions
 
@@ -127,5 +186,5 @@ Throws if WEBP image is compared with imag of another extension.
 
 ## Notes
 
-- May produce false positives for comparison of images of different format origins due to inconsistent resulting bitmap size (use `compareFunction` to avoid this)
-- Can work with interformat images, but WEBP is not supported for this at the moment
+- May produce false positives for comparison of images of different format origins due to inconsistent resulting bitmap size. Use `compareFunction` in `options` third argument as mitigation.
+- Can work with any supported interformat images, but `WEBP`
