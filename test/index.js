@@ -4,6 +4,7 @@ const { readFileSync } = require("node:fs");
 const { describe, it } = require("node:test");
 
 const { compare } = require("../index");
+const { MODES } = require("../lib");
 
 const commonImagesPath = ["test", "images"];
 
@@ -39,7 +40,9 @@ describe("png", () => {
     const image1 = readFileSync(join(...commonPathSegments, "image1.png"));
     const image2 = readFileSync(join(...commonPathSegments, "image2.png"));
 
-    const actual = await compare(image1, image2, comparator);
+    const actual = await compare(image1, image2, {
+      compareFunction: comparator,
+    });
 
     assert.strictEqual(actual, expected);
   });
@@ -51,18 +54,22 @@ describe("png", () => {
     const image1 = readFileSync(join(...commonPathSegments, "image1.png"));
     const image2 = readFileSync(join(...commonPathSegments, "image2.png"));
 
-    const actual = await compare(image1, image2, comparator);
+    const actual = await compare(image1, image2, {
+      compareFunction: comparator,
+    });
 
     assert.strictEqual(actual, expected);
   });
 
-  it("should detect same images with grayscale", async () => {
+  it("should detect same images with grayscale with CHECK_GRAYSCALE flag", async () => {
     const expected = true;
     const commonPathSegments = [...commonPngImagesPath, "same-with-grayscale"];
     const image1 = readFileSync(join(...commonPathSegments, "image1.png"));
     const image2 = readFileSync(join(...commonPathSegments, "image2.png"));
 
-    const actual = await compare(image1, image2);
+    const actual = await compare(image1, image2, {
+      modes: MODES.CHECK_GRAYSCALE,
+    });
 
     assert.strictEqual(actual, expected);
   });
@@ -100,7 +107,9 @@ describe("jpg", () => {
     const image1 = readFileSync(join(...commonPathSegments, "image1.jpg"));
     const image2 = readFileSync(join(...commonPathSegments, "image2.jpg"));
 
-    const actual = await compare(image1, image2, comparator);
+    const actual = await compare(image1, image2, {
+      compareFunction: comparator,
+    });
 
     assert.strictEqual(actual, expected);
   });
@@ -112,7 +121,27 @@ describe("jpg", () => {
     const image1 = readFileSync(join(...commonPathSegments, "image1.jpg"));
     const image2 = readFileSync(join(...commonPathSegments, "image2.jpg"));
 
-    const actual = await compare(image1, image2, comparator);
+    const actual = await compare(image1, image2, {
+      compareFunction: comparator,
+    });
+
+    assert.strictEqual(actual, expected);
+  });
+
+  it("should detect same images with changed hue", async () => {
+    const expected = true;
+    const comparator = (byte1, byte2) => Math.abs(byte1 - byte2) > 255;
+    const commonPathSegments = [
+      ...commonJpgImagesPath,
+      "same-with-changed-hue",
+    ];
+    const image1 = readFileSync(join(...commonPathSegments, "image1.jpg"));
+    const image2 = readFileSync(join(...commonPathSegments, "image2.jpg"));
+
+    const actual = await compare(image1, image2, {
+      compareFunction: comparator,
+      modes: MODES.CHECK_HUE,
+    });
 
     assert.strictEqual(actual, expected);
   });
@@ -150,7 +179,9 @@ describe("webp", () => {
     const image1 = readFileSync(join(...commonPathSegments, "image1.webp"));
     const image2 = readFileSync(join(...commonPathSegments, "image2.webp"));
 
-    const actual = await compare(image1, image2, comparator);
+    const actual = await compare(image1, image2, {
+      compareFunction: comparator,
+    });
 
     assert.strictEqual(actual, expected);
   });
@@ -162,7 +193,9 @@ describe("webp", () => {
     const image1 = readFileSync(join(...commonPathSegments, "image1.webp"));
     const image2 = readFileSync(join(...commonPathSegments, "image2.webp"));
 
-    const actual = await compare(image1, image2, comparator);
+    const actual = await compare(image1, image2, {
+      compareFunction: comparator,
+    });
 
     assert.strictEqual(actual, expected);
   });
@@ -221,7 +254,9 @@ describe("mixins", () => {
     const image1 = readFileSync(join(...commonPathSegments, "image.jpg"));
     const image2 = readFileSync(join(...commonPathSegments, "image.png"));
 
-    const actual = await compare(image1, image2, comparator);
+    const actual = await compare(image1, image2, {
+      compareFunction: comparator,
+    });
 
     assert.strictEqual(actual, expected);
   });
