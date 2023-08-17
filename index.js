@@ -1,11 +1,11 @@
 const {
+  MIMES,
+  MODES,
   getDimensions,
   BYTE_COMPARERS,
   areBuffersEqual,
   getResizedBitmap,
   extractBitmapAndChannelCount,
-  MIMES,
-  MODES,
 } = require("./lib");
 
 module.exports = {
@@ -32,8 +32,8 @@ as object with compareFunction property instead`
     return (
       areBuffersEqual(
         ...(await Promise.all([compareImpl(buffer1), compareImpl(buffer2)])),
-        options.comparator || BYTE_COMPARERS[buffer1[0]],
-        options.comparator || BYTE_COMPARERS[buffer2[0]],
+        options.compareFunction || BYTE_COMPARERS[buffer1[0]],
+        options.compareFunction || BYTE_COMPARERS[buffer2[0]],
         buffer1[0]
       ) ||
       !!(
@@ -67,6 +67,7 @@ as object with compareFunction property instead`
       )
     );
   },
+  MODES,
 };
 
 const compareImpl = async (buffer) => {

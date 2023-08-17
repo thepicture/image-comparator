@@ -140,6 +140,7 @@ describe("jpg", () => {
 
     const actual = await compare(image1, image2, {
       compareFunction: comparator,
+      modes: MODES.CHECK_HUE,
     });
 
     assert.strictEqual(actual, expected);
