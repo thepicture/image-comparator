@@ -1,10 +1,14 @@
 {
   "name": "image-comparator",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Compares images by resizing without dependencies",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "node test"
+    "test": "node test",
+    "build": "ncc build index.js -m -o dist"
   },
   "keywords": [
     "image",
@@ -14,5 +18,8 @@
     "diff"
   ],
   "author": "thepicture",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@vercel/ncc": "0.36.1"
+  }
 }

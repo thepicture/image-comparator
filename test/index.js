@@ -3,8 +3,7 @@ const { join } = require("node:path");
 const { readFileSync } = require("node:fs");
 const { describe, it } = require("node:test");
 
-const { compare } = require("../index");
-const { MODES } = require("../lib");
+const { compare, MODES } = require("../index");
 
 const commonImagesPath = ["test", "images"];
 
