@@ -14,6 +14,11 @@ npm install --save image-comparator
 npm test
 ```
 
+## Build
+```bash
+npm run build
+```
+
 ## Example
 
 ```js
