@@ -72,6 +72,28 @@ describe("png", () => {
 
     assert.strictEqual(actual, expected);
   });
+
+  it("should detect mogrified same images", async () => {
+    const expected = true;
+    const commonPathSegments = [...commonPngImagesPath, "mogrified"];
+    const image1 = readFileSync(join(...commonPathSegments, "image1.png"));
+    const image2 = readFileSync(join(...commonPathSegments, "image2.png"));
+
+    const actual = await compare(image1, image2);
+
+    assert.strictEqual(actual, expected);
+  });
+
+  it("should detect big resized same images", async () => {
+    const expected = true;
+    const commonPathSegments = [...commonPngImagesPath, "big-resized"];
+    const image1 = readFileSync(join(...commonPathSegments, "image1.png"));
+    const image2 = readFileSync(join(...commonPathSegments, "image2.png"));
+
+    const actual = await compare(image1, image2);
+
+    assert.strictEqual(actual, expected);
+  });
 });
 
 describe("jpg", () => {
@@ -232,18 +254,32 @@ describe("mixins", () => {
     assert.strictEqual(actual, expected);
   });
 
-  it("should throw on interformat webp comparison (not implemented)", async () => {
-    const expected = Error;
-    const jpgImage = readFileSync(
+  it("should not throw on interformat webp comparison", async () => {
+    const expected = false;
+    const webpImage = readFileSync(
       join(...commonImagesPath, "webp", "same", "image1.webp")
     );
     const pngImage = readFileSync(
       join(...commonImagesPath, "mixins", "image.png")
     );
 
-    const actual = () => compare(jpgImage, pngImage);
+    const actual = await compare(webpImage, pngImage);
 
-    assert.rejects(actual, expected);
+    assert.strictEqual(actual, expected);
+  });
+
+  it("should detect same webp and png images as same", async () => {
+    const expected = true;
+    const webpImage = readFileSync(
+      join(...commonImagesPath, "webp", "same", "image1.webp")
+    );
+    const pngImage = readFileSync(
+      join(...commonImagesPath, "mixins", "image3.png")
+    );
+
+    const actual = await compare(webpImage, pngImage);
+
+    assert.strictEqual(actual, expected);
   });
 
   it("should perceive same interformat images as different with high threshold", async () => {
