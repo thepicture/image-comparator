@@ -1,5 +1,4 @@
 const {
-  MIMES,
   MODES,
   getDimensions,
   BYTE_COMPARERS,
@@ -10,9 +9,6 @@ const {
 
 module.exports = {
   compare: async (buffer1, buffer2, options = {}) => {
-    const isInterformatComparison =
-      buffer1[0] === MIMES.WEBP && buffer1[0] !== buffer2[0];
-
     if (typeof options === "function") {
       console.warn(
         `Third argument as function deprecated. 
@@ -23,10 +19,6 @@ as object with compareFunction property instead`
       options = {
         compareFunction: options,
       };
-    }
-
-    if (isInterformatComparison) {
-      throw new Error("Interformat webp comparison not supported");
     }
 
     return (
