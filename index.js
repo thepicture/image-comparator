@@ -21,9 +21,15 @@ as object with compareFunction property instead`
       };
     }
 
+    const [bitmap1, bitmap2] = await Promise.all([
+      compareImpl(buffer1),
+      compareImpl(buffer2),
+    ]);
+
     return (
       areBuffersEqual(
-        ...(await Promise.all([compareImpl(buffer1), compareImpl(buffer2)])),
+        bitmap1,
+        bitmap2,
         options.compareFunction || BYTE_COMPARERS[buffer1[0]],
         options.compareFunction || BYTE_COMPARERS[buffer2[0]],
         buffer1[0]
@@ -55,7 +61,15 @@ as object with compareFunction property instead`
                 buffer1[0]
               );
             })
-            .some(Boolean))
+            .some(Boolean)) ||
+        (options.modes & MODES.CHECK_INVERSION &&
+          areBuffersEqual(
+            bitmap1,
+            bitmap2.map(inverseByte),
+            BYTE_COMPARERS[buffer1[0]],
+            BYTE_COMPARERS[buffer2[0]],
+            buffer1[0]
+          ))
       )
     );
   },
@@ -67,7 +81,26 @@ const compareImpl = async (buffer) => {
 
   const { channels, data: bitmap } = await extractBitmapAndChannelCount(buffer);
 
-  return await getResizedBitmap(width, height, channels, bitmap);
+  const resizedBitmap = await getResizedBitmap(width, height, channels, bitmap);
+
+  const isRGB = resizedBitmap.length === 12;
+
+  if (isRGB) {
+    // https://github.com/TomasHubelbauer/rgb-to-rgba
+    const rgba = new Uint8ClampedArray((resizedBitmap.length / 3) * 4);
+
+    for (let index = 0; index < rgba.length; index++) {
+      if (index % 4 === 3) {
+        rgba[index] = 255;
+      } else {
+        rgba[index] = resizedBitmap[~~(index / 4) * 3 + (index % 4)];
+      }
+    }
+
+    return rgba;
+  }
+
+  return resizedBitmap;
 };
 
 const grayscaleCompareImpl = async (buffer) => {
@@ -86,3 +119,5 @@ const grayscaleCompareImpl = async (buffer) => {
 
   return await getResizedBitmap(width, height, channels, bitmap);
 };
+
+const inverseByte = (byte, index) => (index % 4 === 3 ? byte : 255 - byte);
