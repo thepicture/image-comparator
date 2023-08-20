@@ -1,11 +1,12 @@
 {
   "name": "image-comparator",
-  "version": "1.6.1",
+  "version": "1.7.1",
   "description": "Compares images by resizing without dependencies",
   "main": "dist/index.js",
   "files": [
     "dist"
   ],
+  "repository": "thepicture/image-comparator",
   "scripts": {
     "test": "node test",
     "build": "ncc build index.js -m -o dist"
