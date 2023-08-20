@@ -15,6 +15,7 @@ npm test
 ```
 
 ## Build
+
 ```bash
 npm run build
 ```
@@ -160,6 +161,36 @@ const compare = async () => {
 compare();
 ```
 
+Inversion detection:
+
+```js
+const fs = require("node:fs");
+const comparator = require("image-comparator");
+
+const imagePath1 = "path/to/same.png";
+const imagePath2 = "path/to/same.jpg";
+
+const imageBuffer1 = fs.readFileSync(imagePath1);
+const imageBuffer2 = fs.readFileSync(imagePath2);
+
+const compare = async () => {
+  const compareFunction = (byte1, byte2) => Math.abs(byte1 - byte2) < 128; // If color difference is small enough
+
+  const areSame = await comparator.compare(imageBuffer1, imageBuffer2, {
+    compareFunction,
+    modes: comparator.MODES.CHECK_INVERSION,
+  });
+
+  if (areSame) {
+    console.log("Images are the same");
+  } else {
+    console.log("Images are different");
+  }
+};
+
+compare();
+```
+
 # API
 
 ```js
@@ -173,7 +204,7 @@ type Options = {
 
 Compares two images. Can accept modes to detect hue or grayscale changes.
 
-Throws if WEBP image is compared with image of another extension.
+Can detect differences between images of different formats, such as comparision of `jpg` with `webp`.
 
 Warns about deprecated third argument if `compareFunction` passed outside the object as `function`.
 
@@ -182,6 +213,12 @@ Warns about deprecated third argument if `compareFunction` passed outside the ob
 - png
 - jpg
 - webp
+
+## Supported modes
+
+- `CHECK_HUE`
+- `CHECK_GRAYSCALE`
+- `CHECK_INVERSION`
 
 ## Detection algorithm
 
@@ -192,4 +229,3 @@ Warns about deprecated third argument if `compareFunction` passed outside the ob
 ## Notes
 
 - May produce false positives for comparison of images of different format origins due to inconsistent resulting bitmap size. Use `compareFunction` in `options` third argument as mitigation.
-- Can work with any supported interformat images, but `WEBP`

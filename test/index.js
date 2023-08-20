@@ -94,6 +94,19 @@ describe("png", () => {
 
     assert.strictEqual(actual, expected);
   });
+
+  it("should detect same inversed images with CHECK_INVERSION flag", async () => {
+    const expected = true;
+    const commonPathSegments = [...commonPngImagesPath, "same-inversed"];
+    const image1 = readFileSync(join(...commonPathSegments, "image1.png"));
+    const image2 = readFileSync(join(...commonPathSegments, "image2.png"));
+
+    const actual = await compare(image1, image2, {
+      modes: MODES.CHECK_INVERSION,
+    });
+
+    assert.strictEqual(actual, expected);
+  });
 });
 
 describe("jpg", () => {
