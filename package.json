@@ -6,6 +6,7 @@
   "files": [
     "dist"
   ],
+  "repository": "thepicture/image-comparator",
   "scripts": {
     "test": "node test",
     "build": "ncc build index.js -m -o dist"
