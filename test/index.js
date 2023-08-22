@@ -107,6 +107,38 @@ describe("png", () => {
 
     assert.strictEqual(actual, expected);
   });
+
+  it("should detect strictly same rotated images with CHECK_ROTATION flag", async () => {
+    const expected = true;
+    const commonPathSegments = [...commonPngImagesPath, "same-rotated"];
+    const image1 = readFileSync(join(...commonPathSegments, "image1.png"));
+    const image2 = readFileSync(join(...commonPathSegments, "image2.png"));
+    const image3 = readFileSync(join(...commonPathSegments, "image3.png"));
+    const image4 = readFileSync(join(...commonPathSegments, "image4.png"));
+    const strictCompareFunction = (byte1, byte2) => byte1 === byte2;
+
+    const actual1 = await compare(image1, image2, {
+      modes: MODES.CHECK_ROTATION,
+      compareFunction: strictCompareFunction,
+    });
+    const actual2 = await compare(image2, image3, {
+      modes: MODES.CHECK_ROTATION,
+      compareFunction: strictCompareFunction,
+    });
+    const actual3 = await compare(image3, image4, {
+      modes: MODES.CHECK_ROTATION,
+      compareFunction: strictCompareFunction,
+    });
+    const actual4 = await compare(image4, image1, {
+      modes: MODES.CHECK_ROTATION,
+      compareFunction: strictCompareFunction,
+    });
+
+    assert.strictEqual(actual1, expected);
+    assert.strictEqual(actual2, expected);
+    assert.strictEqual(actual3, expected);
+    assert.strictEqual(actual4, expected);
+  });
 });
 
 describe("jpg", () => {
