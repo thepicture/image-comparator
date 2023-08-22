@@ -197,8 +197,12 @@ compare();
 compare: (buffer1: Buffer, buffer2: Buffer, options: Options) => bool;
 
 type Options = {
-  compareFunction: (byte1, byte2) => boolean,
-  modes: MODES.CHECK_HUE | MODES.CHECK_GRAYSCALE,
+  compareFunction?: (byte1, byte2) => boolean,
+  modes?:
+    | MODES.CHECK_HUE
+    | MODES.CHECK_GRAYSCALE
+    | MODES.CHECK_INVERSION
+    | MODES.CHECK_ROTATION,
 };
 ```
 

@@ -69,7 +69,14 @@ as object with compareFunction property instead`
             BYTE_COMPARERS[buffer1[0]],
             BYTE_COMPARERS[buffer2[0]],
             buffer1[0]
-          ))
+          )) ||
+        (options.modes & MODES.CHECK_ROTATION &&
+          JSON.parse(JSON.stringify([...bitmap1]))
+            .sort((a, b) => (a - b > 0 ? 1 : -1))
+            .join() ===
+            JSON.parse(JSON.stringify([...bitmap2]))
+              .sort((a, b) => (a - b > 0 ? 1 : -1))
+              .join())
       )
     );
   },
