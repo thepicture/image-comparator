@@ -1,6 +1,6 @@
 {
   "name": "image-comparator",
-  "version": "1.8.3",
+  "version": "1.8.4",
   "description": "Compares images by resizing without dependencies",
   "main": "dist/index.js",
   "files": [
